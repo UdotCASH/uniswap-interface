@@ -18,7 +18,6 @@ import { TYPE} from '../../theme'
 
 import { YellowCard } from '../Card'
 import { Moon, Sun } from 'react-feather'
-import Menu from '../Menu'
 
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
@@ -32,12 +31,11 @@ import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
 
 const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
+  align-items: flex-start;
+  flex-direction: column;
   width: 100%;
   top: 0;
   position: relative;
@@ -54,16 +52,18 @@ const HeaderFrame = styled.div`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
         padding: 0.5rem 1rem;
   `}
+  padding-top: 24px;
 `
 
 const HeaderControls = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-self: flex-end;
+  width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     justify-self: center;
     width: 100%;
@@ -82,11 +82,13 @@ const HeaderControls = styled.div`
 
 const HeaderElement = styled.div`
   display: flex;
+  flex-direction: column
   align-items: center;
   gap: 8px;
+  width: 100%;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-   flex-direction: row-reverse;
+   flex-direction: column;
     align-items: center;
   `};
 `
@@ -94,16 +96,29 @@ const HeaderElement = styled.div`
 const HeaderElementWrap = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
 `
 
 const HeaderRow = styled(RowFixed)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
   ${({ theme }) => theme.mediaWidth.upToMedium`
    width: 100%;
   `};
 `
 
 const HeaderLinks = styled(Row)`
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
@@ -187,6 +202,13 @@ const Title = styled.a`
   }
 `
 
+const Top = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+`
+
 const UniIcon = styled.div`
   transition: transform 0.3s ease;
   :hover {
@@ -195,6 +217,11 @@ const UniIcon = styled.div`
 `
 
 const activeClassName = 'ACTIVE'
+
+const SmallSquare = styled.div`
+  height: 35px;
+  width: 35px;
+`
 
 const StyledNavLink = styled(NavLink).attrs({
   activeClassName
@@ -210,6 +237,10 @@ const StyledNavLink = styled(NavLink).attrs({
   width: fit-content;
   margin: 0 12px;
   font-weight: 500;
+  width: 100%;
+  flex-grow: 1;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 
   &.${activeClassName} {
     border-radius: 0px;
@@ -338,13 +369,28 @@ export default function Header() {
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal>
       <HeaderRow>
-        <Title href=".">
-          <UniIcon>
-            <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
-          </UniIcon>
-        </Title>
+        <Top>
+          <Title href=".">
+            <UniIcon>
+              <img width={'32px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+            </UniIcon>
+          </Title>
+          <SmallSquare>
+            <StyledMenuButton onClick={() => toggleDarkMode()}>
+              {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+            </StyledMenuButton>
+          </SmallSquare>
+        </Top>
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/exchange'}>
+          <StyledNavLink
+            id={`swap-nav-link`}
+            to={'/exchange'}
+            isActive={(match, { pathname }) =>
+              Boolean(match) ||
+              pathname.startsWith('/exchange') ||
+              pathname === '/'
+            }
+          >
             {t('Exchange')}
           </StyledNavLink>
           <StyledNavLink
@@ -359,6 +405,22 @@ export default function Header() {
             }
           >
             {t('Liquidity')}
+          </StyledNavLink>
+          <StyledNavLink
+            id={`nav-discord`}
+            to={{pathname:'https://discord.gg/Smm8zjEuyB'}}
+            target='_blank'
+            isActive={() => false}
+          >
+            Discord
+          </StyledNavLink>
+          <StyledNavLink
+            id={`nav-analytics`}
+            to={{pathname:'https://info.u.exchange'}}
+            target='_blank'
+            isActive={() => false}
+          >
+            Analytics
           </StyledNavLink>
           {/*<StyledNavLink id={`stake-nav-link`} to={'/uni'}>
             UNI
@@ -424,16 +486,12 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
           <StyledMenuButton onClick={() => switchToBSC()}>
             To BSC
           </StyledMenuButton>
           <StyledMenuButton onClick={() => switchToPolygon()}>
             To Polygon
           </StyledMenuButton>
-          <Menu />
         </HeaderElementWrap>
       </HeaderControls>
     </HeaderFrame>

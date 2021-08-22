@@ -38,13 +38,28 @@ const AppWrapper = styled.div`
   overflow-x: hidden;
 `
 
+const HorizontalSplitter = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+`
+
 const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
-  width: 100%;
+  width: 320px;
   justify-content: space-between;
+  background: ${({ theme }) => theme.bg1};
+  min-height: 100vh;
+`
+
+const Grow = styled.div`
+  flex-grow: 1;
+  flex-shrink: 0;
 `
 
 const BodyWrapper = styled.div`
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -80,9 +95,11 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
         <URLWarning />
+        <HorizontalSplitter>
         <HeaderWrapper>
           <Header />
         </HeaderWrapper>
+        <Grow>
         <BodyWrapper>
           <Popups />
           <Polling />
@@ -116,6 +133,8 @@ export default function App() {
           </Web3ReactManager>
           <Marginer />
         </BodyWrapper>
+        </Grow>
+        </HorizontalSplitter>
       </AppWrapper>
     </Suspense>
   )
